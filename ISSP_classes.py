@@ -3,7 +3,7 @@
 class body(object):
 	
 	def __init__(self, static, pos, v, dvdt, dryMass, fuelMass, engineOutput, engineBurnRate, engineThrottle, thrustVector,
-	             dragCoef, A)
+	             dragCoef, A, r, gravity)
 		
 		self.static = static  # True or False. True for bodies allowed to move, e.g. spacecraft. False for
                               # bodies that will not move (e.g. Earth)
@@ -24,7 +24,8 @@ class body(object):
 		
 		self.engineThrottle = engineThrottle  # current throttle of engine. Between 0 and 1.
 		
-		self.thrustVector = thrustVector  # direction of engine thrust, specified by np.array([x,y,z]), where components resolve to 1.
+		self.thrustVector = thrustVector  # direction of engine thrust, specified by np.array([x,y,z]), 
+		                                  # where sqrt(x^2+y^2+z^2) = 1.
 		                                  # Used to calculate engineThrust.
 		                                    
 		self.dragCoef = dragCoef  # current drag coefficient or body. Can be zero for planets. Might change depending on V
@@ -32,7 +33,11 @@ class body(object):
 		
 		self.A = A  # cross-sectional area of body. Used to calculate drag, so can be 0 for planets.
 		
-	@property  # properties are read only attributes that are calculated from other attributes.
+		self.r = r  # Radius of body. 0 for spacecraft. For plotting and calculating altitude of spacecraft from planet
+		
+		self.gravity = gravity  # compononent force on body due to net gravitational attraction to other bodies in simulation
+		
+	@property  # properties are read-only attributes that are calculated from other attributes.
 		        # i.e. things that never have to be set, but might be handy to be able to read
 		
 		def speed(self):  # speed in (m/s^2)
@@ -45,4 +50,7 @@ class body(object):
 			return dryMass + fuelMass
 
 		def thrust(self)  # component force due to engine thrust
-			return thrustVector * engineOutput * engineThrottle
+			if fuelMass > 0:  # if fuel still left in the tank
+				return thrustVector * engineOutput * engineThrottle
+			else:  # if no fuel left
+				return np.array([0, 0, 0])  # thrust = 0

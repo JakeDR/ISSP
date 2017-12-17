@@ -1,20 +1,14 @@
-##ISSP script fpr testing things
+##ISSP script f0r testing things
 
 import numpy as np
 import matplotlib.pyplot as plt
 import ISSP_functions as ISSP
 
 
-alt = np.arange(0,45000, 10)
-density = np.zeros(len(alt))
+pos1 = np.array([0,0,0])
+pos2 = np.array([100,0,0])
+mass1 = 100
+mass2 = 50972e25
 
-for i in range(0,len(density)):
-	density[i] = ISSP.airDensity(alt[i])
-	#print("alt="+str(alt[i])+"  density="+str(density[i]))
-
-plt.plot(alt, density)
-plt.axis([0, 45000, 0, 0.0015])
-plt.xlabel('Altitude (m)')
-plt.ylabel('Air density (kg/m^3)')
-plt.title('Relationship between air density and altitude')
-plt.show()
+F = ISSP.gravity(pos1, pos2, mass1, mass2)
+print(F)
