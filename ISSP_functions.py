@@ -124,8 +124,7 @@ def netGravity(bodyList):
 		for k in range(1, len(bodyList)):  # for each body in list except the first one
 			
 			# calculate net gravity between first body in list, and all others
-			bodyList[0].gravity = bodyList[0].gravity + 
-			                      gravity(bodyList[0].pos, bodyList[i].pos, bodyList[0].totalMass, bodyList[i].totalMass)
+			bodyList[0].gravity = bodyList[0].gravity + gravity(bodyList[0].pos, bodyList[i].pos, bodyList[0].totalMass, bodyList[i].totalMass)
 		
 		bodyList = np.roll(bodyList, 1)  # rotate bodyList by 1 to present new body at bodyList[0]
 

@@ -11,9 +11,9 @@ import ISSP_functions as ISSP
 # the time vector contains times (seconds) which are used tp generate a time step
 # over which to simulate the model. The vector does not need to have even spacing
 # of numbers, and numbers can be floating point. However, for the sake of realism,
-# numbers should be ascending order.
+# numbers should be in ascending order.
 
-time = np.arange(0, 10, 1)  # create time vector starting at t=0, ending at t=599, incrementing by 1 second
+time = np.arange(0, 600, 1)  # create time vector starting at t=0, ending at t=599, incrementing by 1 second
 
 
 #### iterate through time vector, generating time interval ####
