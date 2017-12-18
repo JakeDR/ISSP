@@ -2,11 +2,13 @@
 
 class body(object):
 	
-	def __init__(self, static, pos, v, dvdt, dryMass, fuelMass, engineOutput, engineBurnRate, engineThrottle, thrustVector,
+	def __init__(self, static, name, pos, v, dvdt, dryMass, fuelMass, engineOutput, engineBurnRate, engineThrottle, thrustVector,
 	             dragCoef, A, r, gravity)
 		
 		self.static = static  # True or False. True for bodies allowed to move, e.g. spacecraft. False for
                               # bodies that will not move (e.g. Earth)
+                              
+        self.name = name  # a string to identify the body. Can be used as labels on graphs etc
 		
 		self.pos = pos  # np vector containing current postion [x, y, z], in meters
 		
