@@ -43,14 +43,17 @@ class body(object):
 		def speed(self):  # speed in (m/s^2)
 			return (v[0]**2 * v[1]**2 * v[2]**2)**0.5
 
-		def g(self)  # combined accelation. 
+		def g(self):  # combined accelation. 
 			return (dvdt[0]**2 * dvdt[1]**2 * dvdt[2]**2)**0.5
 			
-		def totalMass(self)  # total mass of body
+		def totalMass(self):  # total mass of body
 			return dryMass + fuelMass
 
-		def thrust(self)  # component force due to engine thrust
+		def thrust(self):  # component force due to engine thrust
 			if fuelMass > 0:  # if fuel still left in the tank
 				return thrustVector * engineOutput * engineThrottle
 			else:  # if no fuel left
 				return np.array([0, 0, 0])  # thrust = 0
+		
+		def force(self):  # total net force acting on body
+			return thrust + gravity
