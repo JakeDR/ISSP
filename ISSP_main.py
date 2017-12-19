@@ -34,9 +34,10 @@ dragCoef = 0
 A = 0
 r = 6.371e6  # m
 gravity = np.array([0, 0, 0])
+drag = np.array([0, 0, 0])
 
 earth = ISSPclasses.body(static, name, pos, v, dvdt, dryMass, fuelMass, engineOutput, engineBurnRate, engineThrottle,
-                         thrustVector, dragCoef, A, r, gravity)
+                         thrustVector, dragCoef, A, r, gravity, drag)
 
 # spacecraft parameters
 static = False
@@ -54,9 +55,10 @@ dragCoef = 0.515  # guesstimate
 A = 78.54  # m^2
 r = 0
 gravity = np.array([0, 0, 0])
+drag = np.array([0, 0, 0])
 
 spacecraft = ISSPclasses.body(static, name, pos, v, dvdt, dryMass, fuelMass, engineOutput, engineBurnRate,
-                              engineThrottle, thrustVector, dragCoef, A, r, gravity)
+                              engineThrottle, thrustVector, dragCoef, A, r, gravity, drag)
 
 #### put bodies in objectList ####
 
@@ -71,9 +73,10 @@ for i in range(1, len(time)):
     # objectList = ISSP.update(objectList)  # this will calculate the position of bodies at the end of the tstep
     objectList = ISSP.burnFuelList(dt, objectList)  # updates fuel masses for objects in objectList
 
+
     spacecraft.thrustVector = ISSP.thrustVector1(spacecraft.v, 'fwd')   # specify what the thrust vector should be for
                                                                         # spacecraft
 
-	
+
 
 

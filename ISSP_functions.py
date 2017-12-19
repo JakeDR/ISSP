@@ -61,16 +61,34 @@ def airDensity(alt):
 ######################################
 
 # returns component drag in [x, y, z].
-# density = density of medium (kg/m^3). See density()
+
+# point = position of body experience drag
+# planet = position of planet with atmosphere
+# r = radius of planet with atmosphere
+
 # A = cross-sectional area of body (m^2)
 # v = component velocity in [x,y,x] (m/s)
 # C = drag coefficient
 
 
-def drag(density, A, C, v):
+def drag(point, planet, r, A, C, v):
+	alt = altitude(point, planet, r)
+	density = airDensity(alt)
 	speed = (v[0]**2 + v[1]**2 + v[2]**2)**0.5
 	F = - 0.5*density*C*A*v*speed
-	return F
+	return F  # component drag in [x, y, z]
+
+######################################
+
+# returns component drag in [x, y, z] for each body in objectList,
+# as long as not earth
+
+# 'planet' is the planet whose atmosphere is causing drag
+
+def dragList(objectList, planet):
+	for body in objectList:
+		if body != planet:
+			body.drag = drag(body.pos, planet.pos, planet.r, body.A, body.C, body.v)
 
 ######################################
 
