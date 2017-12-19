@@ -1,5 +1,7 @@
 #ISSP functions
 
+import numpy as np
+
 # altitude()
 # airDensity()
 # drag()
@@ -12,32 +14,34 @@
 ######################################
 
 # returns distance of point at [x, y, z] from planet at [x, y, z] with radius r
+
+
 def altitude(point, planet, r):
-    distance = ((point[0] - planet[0])**2 + (point[1] - planet[1])**2 + (point[2] - planet[2])**2)**0.5
-    altitude = distance - r
-    return altitude
+	distance = ((point[0] - planet[0])**2 + (point[1] - planet[1])**2 + (point[2] - planet[2])**2)**0.5
+	altitude = distance - r
+	return altitude
 
 ######################################
 
 # returns density of air (kg/m^3) at given altitude above earth
 def airDensity(alt):
 
-    p0 = 101.325  # sea level standard atmospheric pressure, kPa
-    T0 = 288.15  # sea level standard temperature, K
-    g = 9.80665  # earth surface gravitation acceleration, m/s^2
-    L = 0.0065  # temperature lapse rate, K/m
-    R = 8.31447  # ideal gas constant, J/(mol*K)
-    M = 0.0289644  # molar mass of dry air, kg/mol
+	p0 = 101.325  # sea level standard atmospheric pressure, kPa
+	T0 = 288.15  # sea level standard temperature, K
+	g = 9.80665  # earth surface gravitation acceleration, m/s^2
+	L = 0.0065  # temperature lapse rate, K/m
+	R = 8.31447  # ideal gas constant, J/(mol*K)
+	M = 0.0289644  # molar mass of dry air, kg/mol
 
 
-    if alt >= 42000:  # if alt is greater than 42,000m, assume out of atmosphere
-        density = 0
-        return density
-    else:
-        T = T0 - (L*alt)  # temperature at altitude, alt
-        p = p0*(1 - (L*alt)/T0) **((g*M)/(R*L))  # pressure at altitute, alt
-        density = (p*M)/(R*T)
-        return density
+	if alt >= 42000:  # if alt is greater than 42,000m, assume out of atmosphere
+		density = 0
+		return density
+	else:
+		T = T0 - (L*alt)  # temperature at altitude, alt
+		p = p0*(1 - (L*alt)/T0) **((g*M)/(R*L))  # pressure at altitute, alt
+		density = (p*M)/(R*T)
+		return density
 
 # use below if wanting to visualise relationship
 #alt = np.arange(0,45000, 10)
@@ -61,6 +65,8 @@ def airDensity(alt):
 # A = cross-sectional area of body (m^2)
 # v = component velocity in [x,y,x] (m/s)
 # C = drag coefficient
+
+
 def drag(density, A, C, v):
 	speed = (v[0]**2 + v[1]**2 + v[2]**2)**0.5
 	F = - 0.5*density*C*A*v*speed
@@ -73,9 +79,22 @@ def drag(density, A, C, v):
 # burnRate = engine's burn rate of fuel, kg/s
 # throttle = throttle status (between 0 and 1)
 # fuelMass = mass of fuel at at start of time step (kg)
+
+
 def burnFuel(dt, burnRate, throttle, fuelMass):
 	fuelMass = fuelMass - (dt*burnRate*throttle)
 	return fuelMass
+
+######################################
+
+# iterates over objectList containing bodies in simulation and
+# computes updates the fuelMass using burnFuel()
+
+
+def burnFuelList(dt, objectList):
+	for body in objectList:
+		body.fuelMass = burnFuel(dt, body.engineBurnRate, body.engineThrottle, body.fuelMass)
+	return objectList
 
 ######################################
 
@@ -85,6 +104,8 @@ def burnFuel(dt, burnRate, throttle, fuelMass):
 # in [x, y, z].
 # This simple version allows absolute thrust vector to be given as either in the spacecraft's
 # direction of travel, or against it.
+
+
 def thrustVector1(v, direction):
 
 	if direction == 'fwd':  # thrust to be in spacecraft direction of travel
@@ -102,6 +123,8 @@ def thrustVector1(v, direction):
 # axis, and the line from the spacecraft to some other point as the other axis. The third
 # axis is then orthogonal to these two axes.
 # angle1 is the angle
+
+
 def thrustVector2(v, pos, reference_pos, yaw, elevation):
 	# okay, got a bit stuck on this one! JR
 	return
@@ -109,11 +132,13 @@ def thrustVector2(v, pos, reference_pos, yaw, elevation):
 ######################################
 
 # Calculate component force [Fx, Fy, Fz] felt by body at pos1, with mass1, due to
-# gravitional attraction with body at pos2 with mass2
+# gravitational attraction with body at pos2 with mass2
 # pos1 = position of body1 [x, y, z] (m)
 # pos2 = position of body2 [x, y, z] (m)
 # mass1 = mass of body1 (kg)
 # mass2 = mass of body2 (kg)
+
+
 def gravity(pos1, pos2, mass1, mass2):
 	G = 6.674e-11  # gravitational constant (m^3*kg^-1*s^-2)
 	d = ((pos1[0] - pos2[0])**2 + (pos1[1] - pos2[1])**2 + (pos1[2] - pos2[2])**2)**0.5
@@ -124,6 +149,8 @@ def gravity(pos1, pos2, mass1, mass2):
 
 # given a list containing all bodies in the simulation, calculate the net force due
 # to gravity for each body, due to gravity between all other bodies.
+
+
 def netGravity(bodyList):
 
 	for i in range(0, len(bodyList)):  # for as many times as there are bodies
