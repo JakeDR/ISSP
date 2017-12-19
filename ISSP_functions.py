@@ -183,3 +183,15 @@ def netGravity(bodyList):
 		bodyList = np.roll(bodyList, 1)  # rotate bodyList by 1 to present new body at bodyList[0]
 
 ######################################
+
+
+def updateBodyList(dt, objectList):
+
+	for body in objectList:
+		if body.static != True:  # if body is not set to be static
+			body.dvdt = body.force / body.totalMass  #f rom F=ma
+			body.v = body.v + (body.dvdt * dt)  # calculate new v using v = u + at
+			body.pos = body.pos + (body.v * dt) # calculate new position
+		else:
+			body.pos = body.pos  # not really needed, but explicitly says that static bodies don;t change position
+	return objectList

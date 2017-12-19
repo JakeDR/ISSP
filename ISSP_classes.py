@@ -2,7 +2,7 @@
 
 import numpy as np
 
-class body(object):
+class body:
 	
 	def __init__(self, static, name, pos, v, dvdt, dryMass, fuelMass, engineOutput, engineBurnRate, engineThrottle,
                  thrustVector, dragCoef, A, r, gravity, drag):
@@ -50,21 +50,21 @@ class body(object):
 	def speed(self):  # speed in (m/s^2)
 		return (self.v[0]**2 * self.v[1]**2 * self.v[2]**2)**0.5
 
-    @property
-    def g(self):  # combined accelation.
-        return (self.dvdt[0]**2 * self.dvdt[1]**2 * self.dvdt[2]**2)**0.5
+	@property
+	def g(self):  # combined accelation.
+		return (self.dvdt[0]**2 * self.dvdt[1]**2 * self.dvdt[2]**2)**0.5
 
-    @property
-    def totalMass(self):  # total mass of body
-        return self.dryMass + self.fuelMass
+	@property
+	def totalMass(self):  # total mass of body
+		return self.dryMass + self.fuelMass
 
-    @property
-    def thrust(self):  # component force due to engine thrust
-        if self.fuelMass > 0:  # if fuel still left in the tank
-            return self.thrustVector * self.engineOutput * self.engineThrottle
-        else:  # if no fuel left
-            return np.array([0, 0, 0])  # thrust = 0
+	@property
+	def thrust(self):  # component force due to engine thrust
+		if self.fuelMass > 0:  # if fuel still left in the tank
+			return self.thrustVector * self.engineOutput * self.engineThrottle
+		else:  # if no fuel left
+			return np.array([0, 0, 0])  # thrust = 0
 
-    @property
-    def force(self):  # total net force acting on body
-        return self.thrust + self.gravity + self.drag
+	@property
+	def force(self):  # total net force acting on body
+		return self.thrust + self.gravity + self.drag
