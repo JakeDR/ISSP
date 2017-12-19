@@ -70,9 +70,13 @@ for i in range(1, len(time)):
     dt = time[i] - time[i-1]  # calculate time step, dt
 
     objectList = ISSP.netGravity(objectList)  # calculate net gravity on each body at current positions
+
     # objectList = ISSP.update(objectList)  # this will calculate the position of bodies at the end of the tstep
+
     objectList = ISSP.burnFuelList(dt, objectList)  # updates fuel masses for objects in objectList
 
+	objectList = ISSP.dragList(objectList, earth)   # calculated drag force on each body in body list, due to atmosphere
+													# of earth
 
     spacecraft.thrustVector = ISSP.thrustVector1(spacecraft.v, 'fwd')   # specify what the thrust vector should be for
                                                                         # spacecraft
