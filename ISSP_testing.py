@@ -17,3 +17,7 @@ objList = [obj1, obj2]
 for body in objList:
 	print(body.at1)
 
+testList = [1,2,3]
+print(type(testList))
+testList = [np.array([1]), 2, 3]
+print(type(testList))

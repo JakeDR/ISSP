@@ -42,7 +42,7 @@ earth = ISSPclasses.body(static, name, pos, v, dvdt, dryMass, fuelMass, engineOu
 # spacecraft parameters
 static = False
 name = 'SaturnV complete stack'
-pos = np.array([earth.r, 0.0, 0.0])
+pos = np.array([earth.r+10, 0.0, 0.0])
 v = np.array([0.0, 0.0, 0.0])
 dvdt = np.array([0.0, 0.0, 0.0])
 dryMass = 2950.0e3  # kg
@@ -63,7 +63,6 @@ spacecraft = ISSPclasses.body(static, name, pos, v, dvdt, dryMass, fuelMass, eng
 #### put bodies in objectList ####
 
 objectList = [earth, spacecraft]  # for some reason this seems to be converted to a numpy array later on...?
-print('length of objectList = '+str(len(objectList)))  # but here it is still a list, as len() works
 
 #### iterate through time vector, generating time interval ####
 
@@ -72,7 +71,7 @@ for i in range(1, len(time)):
 
 	objectList = ISSP.netGravity(objectList)  # calculate net gravity on each body at current positions
 
-	objectList = ISSP.updateBodyList(objectList, dt)  # this will calculate the position of bodies at the end of the tstep
+	objectList = ISSP.updateBodyList(dt, objectList)  # this will calculate the position of bodies at the end of the tstep
 
 	objectList = ISSP.burnFuelList(dt, objectList)  # updates fuel masses for objects in objectList
 
