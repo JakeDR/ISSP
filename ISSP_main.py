@@ -21,20 +21,20 @@ time = np.arange(0, 600, 1)  # create time vector starting at t=0, ending at t=5
 # earth parameters
 static = True
 name = 'Earth'
-pos = np.array([0, 0, 0])
-v = np.array([0, 0, 0])
-dvdt = np.array([0, 0, 0])
+pos = np.array([0.0, 0.0, 0.0])
+v = np.array([0.0, 0.0, 0.0])
+dvdt = np.array([0.0, 0.0, 0.0])
 dryMass = 5.972e24  # kg
-fuelMass = 0
-engineOutput = 0
-engineBurnRate = 0
-engineThrottle = 0
-thrustVector = np.array([0, 0, 0])
-dragCoef = 0
-A = 0
+fuelMass = 0.0
+engineOutput = 0.0
+engineBurnRate = 0.0
+engineThrottle = 0.0
+thrustVector = np.array([0.0, 0.0, 0.0])
+dragCoef = 0.0
+A = 0.0
 r = 6.371e6  # m
-gravity = np.array([0, 0, 0])
-drag = np.array([0, 0, 0])
+gravity = np.array([0.0, 0.0, 0.0])
+drag = np.array([0.0, 0.0, 0.0])
 
 earth = ISSPclasses.body(static, name, pos, v, dvdt, dryMass, fuelMass, engineOutput, engineBurnRate, engineThrottle,
                          thrustVector, dragCoef, A, r, gravity, drag)
@@ -42,27 +42,28 @@ earth = ISSPclasses.body(static, name, pos, v, dvdt, dryMass, fuelMass, engineOu
 # spacecraft parameters
 static = False
 name = 'SaturnV complete stack'
-pos = np.array([earth.r, 0, 0])
-v = np.array([0, 0, 0])
-dvdt = np.array([0, 0, 0])
-dryMass = 2950e3  # kg
-fuelMass = 2169e3  # kg
+pos = np.array([earth.r, 0.0, 0.0])
+v = np.array([0.0, 0.0, 0.0])
+dvdt = np.array([0.0, 0.0, 0.0])
+dryMass = 2950.0e3  # kg
+fuelMass = 2169.0e3  # kg
 engineOutput = 33.4e6  # N
 engineBurnRate = 12.58e3  #kg/s source: https://history.nasa.gov/SP-4029/Apollo_18-23b_Launch_Vehicle_Propellant_Use.htm
-engineThrottle = 1
-thrustVector = np.array([1, 0, 0])
+engineThrottle = 1.0
+thrustVector = np.array([1.0, 0.0, 0.0])
 dragCoef = 0.515  # guesstimate
 A = 78.54  # m^2
-r = 0
-gravity = np.array([0, 0, 0])
-drag = np.array([0, 0, 0])
+r = 0.0
+gravity = np.array([0.0, 0.0, 0.0])
+drag = np.array([0.0, 0.0, 0.0])
 
 spacecraft = ISSPclasses.body(static, name, pos, v, dvdt, dryMass, fuelMass, engineOutput, engineBurnRate,
                               engineThrottle, thrustVector, dragCoef, A, r, gravity, drag)
 
 #### put bodies in objectList ####
 
-objectList = [earth, spacecraft]
+objectList = [earth, spacecraft]  # for some reason this seems to be converted to a numpy array later on...?
+print('length of objectList = '+str(len(objectList)))  # but here it is still a list, as len() works
 
 #### iterate through time vector, generating time interval ####
 

@@ -160,6 +160,7 @@ def thrustVector2(v, pos, reference_pos, yaw, elevation):
 def gravity(pos1, pos2, mass1, mass2):
 	G = 6.674e-11  # gravitational constant (m^3*kg^-1*s^-2)
 	d = ((pos1[0] - pos2[0])**2 + (pos1[1] - pos2[1])**2 + (pos1[2] - pos2[2])**2)**0.5
+	print('d = ' + str(d))
 	F = ((G*mass1*mass2)/d**3)*(pos2 - pos1)
 	return F  # component force felt by mass at pos1
 
@@ -178,7 +179,9 @@ def netGravity(bodyList):
 		for k in range(1, len(bodyList)):  # for each body in list except the first one
 
 			# calculate net gravity between first body in list, and all others
-			bodyList[0].gravity = bodyList[0].gravity + gravity(bodyList[0].pos, bodyList[i].pos, bodyList[0].totalMass, bodyList[i].totalMass)
+			print(bodyList[0].name + ' pos= ' + str(bodyList[0].pos))
+			print(bodyList[k].name + ' pos= ' + str(bodyList[k].pos))
+			bodyList[0].gravity = bodyList[0].gravity + gravity(bodyList[0].pos, bodyList[k].pos, bodyList[0].totalMass, bodyList[k].totalMass)
 
 		bodyList = np.roll(bodyList, 1)  # rotate bodyList by 1 to present new body at bodyList[0]
 
@@ -187,11 +190,11 @@ def netGravity(bodyList):
 
 def updateBodyList(dt, objectList):
 
-	for body in objectList:
-		if body.static != True:  # if body is not set to be static
-			body.dvdt = body.force / body.totalMass  #f rom F=ma
-			body.v = body.v + (body.dvdt * dt)  # calculate new v using v = u + at
-			body.pos = body.pos + (body.v * dt) # calculate new position
+	for i in range(0,len(objectList)):
+		if body[i].static != True:  # if body is not set to be static
+			body[i].dvdt = body[i].force / body[i].totalMass  #f rom F=ma
+			body[i].v = body[i].v + (body[i].dvdt * dt)  # calculate new v using v = u + at
+			body[i].pos = body[i].pos + (body[i].v * dt) # calculate new position
 		else:
-			body.pos = body.pos  # not really needed, but explicitly says that static bodies don;t change position
+			body[i].pos = body[i].pos  # not really needed, but explicitly says that static bodies don;t change position
 	return objectList
