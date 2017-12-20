@@ -256,9 +256,9 @@ def recordData(body, bodyData, earth, n, timepoint):
 
 	if (timepoint/n).is_integer():  # if nth timepoint.
 
-		bodyData.pos = np.concatenate((bodyData.pos, body.pos), axis = 0)
-		bodyData.v = np.concatenate((bodyData.v, body.v), axis=0)
-		bodyData.dvdt = np.concatenate((bodyData.dvdt, body.dvdt), axis=0)
+		bodyData.pos = np.row_stack((bodyData.pos, body.pos))
+		bodyData.v = np.row_stack((bodyData.v, body.v))
+		bodyData.dvdt = np.row_stack((bodyData.dvdt, body.dvdt))
 		bodyData.dryMass = np.concatenate((bodyData.dryMass, [body.dryMass]), axis=0)
 		bodyData.fuelMass = np.concatenate((bodyData.fuelMass, [body.fuelMass]), axis=0)
 		bodyData.totalMass = np.concatenate((bodyData.totalMass, [body.totalMass]), axis=0)
