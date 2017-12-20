@@ -112,7 +112,11 @@ def dragList(objectList, planet):
 
 
 def burnFuel(dt, burnRate, throttle, fuelMass):
-	fuelMass = fuelMass - (dt*burnRate*throttle)
+
+	if fuelMass > 0:  # only burn fuel if there is some in the tank
+		fuelMass = fuelMass - (dt*burnRate*throttle)
+	else:
+		fuelMass = 0  # compensates for when fuelMass goes below zero after a burn
 	return fuelMass
 
 ######################################
@@ -122,6 +126,7 @@ def burnFuel(dt, burnRate, throttle, fuelMass):
 
 
 def burnFuelList(dt, objectList):
+
 	for body in objectList:
 		body.fuelMass = burnFuel(dt, body.engineBurnRate, body.engineThrottle, body.fuelMass)
 	return objectList
@@ -148,6 +153,23 @@ def thrustVector1(v, direction):
 
 ######################################
 
+# generates thrust vector either towards or away from a reference position, e.g. a planet
+
+
+def thrustVector2(spacecraft_pos, reference_pos, direction):
+
+	diff = (spacecraft_pos - reference_pos)
+	d = (diff[0]**2 + diff[1]**2 + diff[2]**2)**0.5
+
+	if direction == 'awy':  # thrust to be towards reference
+		thrustVector = (spacecraft_pos - reference_pos)/d
+
+	if direction == 'twd':  # thrust to be away from reference
+		thrustVector =(reference_pos - spacecraft_pos)/d
+	return thrustVector
+
+######################################
+
 # function to generate a thrust vector to specify in which direction the engines will
 # produce force. This more complex function uses the spacecrafts current velocity as one
 # axis, and the line from the spacecraft to some other point as the other axis. The third
@@ -155,7 +177,7 @@ def thrustVector1(v, direction):
 # angle1 is the angle
 
 
-def thrustVector2(v, pos, reference_pos, yaw, elevation):
+def thrustVector3(v, pos, reference_pos, yaw, elevation):
 	# okay, got a bit stuck on this one! JR
 	return
 
@@ -194,10 +216,12 @@ def netGravity(bodyList):
 
 		bodyList = rotateList(bodyList, 1)  # rotate bodyList by 1 to present new body at bodyList[0]
 
-
 	return bodyList
 
 ######################################
+
+# updates the dvdt, v, and pos for each body (in a list) over a timestep,
+# based on attributes at the start of the timestep
 
 
 def updateBodyList(dt, objectList):
@@ -210,3 +234,37 @@ def updateBodyList(dt, objectList):
 		else:
 			body.pos = body.pos  # not really needed, but explicitly says that static bodies don;t change position
 	return objectList
+
+######################################
+
+# generates arrays containing data for a given body, every n timepoints,
+# where timepoint is the current timepoint
+
+# body = body object, e.g. spacecraft
+# bodyData = bodyData object, initialised with initial conditions for t=0
+# n = int. Data will be recorded every first and nth timepoint
+# timepoint = timepoint number.
+
+# Because bodyData is created from body loaded with initial conditions (bodyData = body), t=0 data is already present
+# in bodyData
+
+# NOTE: scalar body attributes, e.g. body.g,  must first be converted to lists, e.g. [body.g], to for the np
+# concatenation to work
+
+
+def recordData(body, bodyData, earth, n, timepoint):
+
+	if (timepoint/n).is_integer():  # if nth timepoint.
+
+		bodyData.pos = np.concatenate((bodyData.pos, body.pos), axis = 0)
+		bodyData.v = np.concatenate((bodyData.v, body.v), axis=0)
+		bodyData.dvdt = np.concatenate((bodyData.dvdt, body.dvdt), axis=0)
+		bodyData.dryMass = np.concatenate((bodyData.dryMass, [body.dryMass]), axis=0)
+		bodyData.fuelMass = np.concatenate((bodyData.fuelMass, [body.fuelMass]), axis=0)
+		bodyData.totalMass = np.concatenate((bodyData.totalMass, [body.totalMass]), axis=0)
+		bodyData.engineThrottle = np.concatenate((bodyData.engineThrottle, [body.engineThrottle]), axis=0)
+		bodyData.speed = np.concatenate((bodyData.speed, [body.speed]), axis=0)
+		bodyData.g = np.concatenate((bodyData.g, [body.g]), axis=0)
+		bodyData.earthAlt = np.concatenate((bodyData.earthAlt, [altitude(body.pos, earth.pos, earth.r)]), axis=0)
+
+	return bodyData

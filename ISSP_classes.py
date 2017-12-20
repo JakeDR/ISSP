@@ -2,6 +2,10 @@
 
 import numpy as np
 
+
+######################################
+
+
 class body:
 	
 	def __init__(self, static, name, pos, v, dvdt, dryMass, fuelMass, engineOutput, engineBurnRate, engineThrottle,
@@ -48,11 +52,11 @@ class body:
 
 	@property
 	def speed(self):  # speed in (m/s^2)
-		return (self.v[0]**2 * self.v[1]**2 * self.v[2]**2)**0.5
+		return (self.v[0]**2 + self.v[1]**2 + self.v[2]**2)**0.5
 
 	@property
 	def g(self):  # combined accelation.
-		return (self.dvdt[0]**2 * self.dvdt[1]**2 * self.dvdt[2]**2)**0.5
+		return (self.dvdt[0]**2 + self.dvdt[1]**2 + self.dvdt[2]**2)**0.5
 
 	@property
 	def totalMass(self):  # total mass of body
@@ -68,3 +72,22 @@ class body:
 	@property
 	def force(self):  # total net force acting on body
 		return self.thrust + self.gravity + self.drag
+
+
+######################################
+
+
+class bodyData:
+
+		def __init__(self, pos, v, dvdt, dryMass, fuelMass, totalMass, engineThrottle, speed, g, earthAlt):
+
+			self.pos = pos
+			self.v = v
+			self.dvdt = dvdt
+			self.dryMass = dryMass
+			self.fuelMass = fuelMass
+			self.totalMass = totalMass
+			self.engineThrottle = engineThrottle
+			self.speed = speed
+			self.g = g
+			self.earthAlt = earthAlt
