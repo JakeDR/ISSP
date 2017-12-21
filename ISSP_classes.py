@@ -55,8 +55,13 @@ class body:
 		return (self.v[0]**2 + self.v[1]**2 + self.v[2]**2)**0.5
 
 	@property
-	def g(self):  # combined accelation.
+	def mod_dvdt(self):  # combined accelation.
 		return (self.dvdt[0]**2 + self.dvdt[1]**2 + self.dvdt[2]**2)**0.5
+
+	@property
+	def g_load(self):
+		g = self.dvdt - (self.gravity/self.totalMass)
+		return (g[0]**2 + g[1]**2 + g[2]**2)**0.5
 
 	@property
 	def totalMass(self):  # total mass of body
@@ -79,15 +84,20 @@ class body:
 
 class bodyData:
 
-		def __init__(self, pos, v, dvdt, dryMass, fuelMass, totalMass, engineThrottle, speed, g, earthAlt):
+		def __init__(self, pos, v, dvdt, dryMass, fuelMass, totalMass, engineThrottle, speed, mod_dvdt,
+					 earthAlt, g_load, drag, force, thrust):
 
-			self.pos = pos
-			self.v = v
-			self.dvdt = dvdt
-			self.dryMass = dryMass
+			self.pos = pos  # position in x, y, z
+			self.v = v  # velocity in x, y, z
+			self.dvdt = dvdt  # acceration in x, y, z
+			self.dryMass = dryMass  # totalMass - fuelMass
 			self.fuelMass = fuelMass
 			self.totalMass = totalMass
-			self.engineThrottle = engineThrottle
-			self.speed = speed
-			self.g = g
+			self.engineThrottle = engineThrottle  # 0.0 - 1.0
+			self.speed = speed  # modulus of velocity
+			self.mod_dvdt = mod_dvdt  # modulus of acceleration
 			self.earthAlt = earthAlt
+			self.g_load = g_load  # scalar g load (m/s^2)
+			self.drag = drag  # vector drag
+			self.force = force  # vector net force
+			self.thrust = thrust  # vector thrust

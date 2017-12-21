@@ -8,7 +8,6 @@ from mpl_toolkits.mplot3d import Axes3D
 plt.style.use('dark_background')
 import ISSP_functions as ISSP
 import ISSP_classes as ISSPclasses
-import math
 
 #### create time vector ####
 
@@ -47,16 +46,16 @@ earth = ISSPclasses.body(static, name, pos, v, dvdt, dryMass, fuelMass, engineOu
 
 # spacecraft parameters
 static = False
-name = 'SaturnV'
-pos = np.array([earth.r+50, 0.0, 0.0])
+name = 'Parachutist'
+pos = np.array([earth.r+50000, 0.0, 0.0])
 v = np.array([0.0, 0.0, 0.0])
 dvdt = np.array([0.0, 0.0, 0.0])
-dryMass = 801.0e3  # kg
-fuelMass = 2169.0e3  # kg
-engineOutput = 60.4e6  # N (not realistic?)
+dryMass = 10#2950.0e3  # kg
+fuelMass = 0.0#2169.0e3  # kg
+engineOutput = 50.27e6  # N (not realistic?)
 engineBurnRate = 12.58e3  #kg/s source: https://history.nasa.gov/SP-4029/Apollo_18-23b_Launch_Vehicle_Propellant_Use.htm
-engineThrottle = 1.0
-thrustVector = np.array([math.cos(math.radians(0.5)), math.sin(math.radians(0.5)), 0.0])
+engineThrottle = 0.0
+thrustVector = np.array([1.0, 0.0, 0.0])
 dragCoef = 0.515  # guesstimate
 A = 78.54  # m^2
 r = 0.0
@@ -78,8 +77,7 @@ spacecraftData = ISSPclasses.bodyData(spacecraft.pos,
 									  [ISSP.altitude(spacecraft.pos, earth.pos, earth.r)],
 									  [spacecraft.g_load],
 									  spacecraft.drag,
-									  spacecraft.force,
-									  spacecraft.thrust
+									  spacecraft.force
 									  )
 
 
@@ -103,10 +101,7 @@ for i in range(1, len(time)):
 	spacecraft.thrustVector = ISSP.thrustVector1(spacecraft.v, 'fwd')   # specify what the thrust vector should be for spacecraft
 	#spacecraft.thrustVector = ISSP.thrustVector2(spacecraft.pos, earth.pos, 'awy')
 	spacecraftData = ISSP.recordData(spacecraft, spacecraftData, earth, n_plot, i)
-	print(spacecraft.v)
-	print(spacecraft.thrustVector)
-	print(spacecraft.thrust)
-	print('')
+
 
 	if ISSP.altitude(spacecraft.pos, earth.pos, earth.r) < 0:  #end simulation if spacecraft crashes
 		end_tpoint = i  # capture last simulate timestep number
@@ -124,8 +119,8 @@ time_plot = np.transpose(time_final[0::n_plot])  # creates subsampled time vecto
 
 #### 3d plot of earth and spacecraft path ####
 
-fig = plt.figure(figsize=plt.figaspect(1)*1)
-ax = fig.add_subplot(111, projection='3d')
+#fig = plt.figure(figsize=plt.figaspect(1)*1)
+#ax = fig.add_subplot(111, projection='3d')
 
 # plot earth
 u = np.linspace(0, 2 * np.pi, 13)
@@ -133,60 +128,54 @@ v = np.linspace(0, np.pi, 13)
 x = (earth.r * np.outer(np.cos(u), np.sin(v))) + earth.pos[0]
 y = (earth.r * np.outer(np.sin(u), np.sin(v))) + earth.pos[1]
 z = (earth.r * np.outer(np.ones(np.size(u)), np.cos(v))) + earth.pos[2]
-ax.plot_surface(x, y, z, rstride=1, cstride=1, color='g', shade=1, edgecolor='k')
+#ax.plot_surface(x, y, z, rstride=1, cstride=1, color='g', shade=1, edgecolor='k')
 
 
-ax.scatter3D(spacecraftData.pos[:,0], spacecraftData.pos[:,1], spacecraftData.pos[:,2], s=50, color='r')
+#ax.scatter3D(spacecraftData.pos[:,0], spacecraftData.pos[:,1], spacecraftData.pos[:,2], s=50, color='r')
 
-ax.w_xaxis.set_pane_color((0.0, 0.0, 0.0, 0.0))
-ax.w_yaxis.set_pane_color((0.0, 0.0, 0.0, 0.0))
-ax.w_zaxis.set_pane_color((0.0, 0.0, 0.0, 0.0))
+#ax.w_xaxis.set_pane_color((0.0, 0.0, 0.0, 0.0))
+#ax.w_yaxis.set_pane_color((0.0, 0.0, 0.0, 0.0))
+#ax.w_zaxis.set_pane_color((0.0, 0.0, 0.0, 0.0))
 
-ax.axis('scaled')
-plt.show()
+#ax.axis('scaled')
+#plt.show()
 
 #### 2D plots of spacecraft data ####
 
 fig = plt.figure(2)
-plt.subplot(4, 2, 1)
+plt.subplot(3, 2, 1)
 plt.plot(time_plot, spacecraftData.earthAlt)
 plt.title('Earth altitude')
-plt.ylabel('(m)')
+plt.ylabel('Altitude (m)')
 plt.xlabel('Time (s)')
 
-plt.subplot(4, 2, 2)
+plt.subplot(3, 2, 2)
 plt.plot(time_plot, spacecraftData.speed)
 plt.title('Speed')
-plt.ylabel('(m/s)')
+plt.ylabel('absolute speed (m/s)')
 plt.xlabel('Time (s)')
 
-plt.subplot(4, 2, 3)
+plt.subplot(3, 2, 3)
 plt.plot(time_plot, spacecraftData.fuelMass)
 plt.title('Fuel')
-plt.ylabel('(kg)')
+plt.ylabel('Fuel mass (kg)')
 plt.xlabel('Time (s)')
 
-plt.subplot(4, 2, 4)
+plt.subplot(3, 2, 4)
 plt.plot(time_plot, spacecraftData.mod_dvdt)
 plt.title('Acceleration')
-plt.ylabel('(m/s^2)')
+plt.ylabel('Acceleration (m/s^2)')
 plt.xlabel('Time (s)')
 
-plt.subplot(4, 2, 5)
+plt.subplot(3, 2, 6)
 plt.plot(time_plot, (spacecraftData.g_load/9.81))
 plt.title('g load')
-plt.ylabel('(xG)')
+plt.ylabel('Acceleration (xG)')
 plt.xlabel('Time (s)')
 
-plt.subplot(4, 2, 6)
+plt.subplot(3, 2, 5)
 plt.plot(time_plot, ((spacecraftData.force[:,0]**2 + spacecraftData.force[:,1]**2 + spacecraftData.force[:,2]**2)**0.5) )
-plt.title('Total force on body')
-plt.ylabel('N')
-plt.xlabel('Time (s)')
-
-plt.subplot(4, 2, 7)
-plt.plot(time_plot, ((spacecraftData.thrust[:,0]**2 + spacecraftData.thrust[:,1]**2 + spacecraftData.thrust[:,2]**2)**0.5) )
-plt.title('Thrust')
+plt.title('force')
 plt.ylabel('N')
 plt.xlabel('Time (s)')
 

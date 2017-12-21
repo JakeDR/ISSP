@@ -144,11 +144,11 @@ def burnFuelList(dt, objectList):
 def thrustVector1(v, direction):
 
 	if direction == 'fwd':  # thrust to be in spacecraft direction of travel
-		thrustVector = v / (v[0]**2 + v[1]**2 + v[2]**2)**0.5
+		thrustVector = v / ((v[0]**2 + v[1]**2 + v[2]**2)**0.5)
 		return thrustVector
 
 	if direction == 'rev':  # thrust to be against spacecraft direction of travel
-		thrustVector = -v / (v[0]**2 + v[1]**2 + v[2]**2)**0.5
+		thrustVector = -v / ((v[0]**2 + v[1]**2 + v[2]**2)**0.5)
 		return thrustVector
 
 ######################################
@@ -264,7 +264,11 @@ def recordData(body, bodyData, earth, n, timepoint):
 		bodyData.totalMass = np.concatenate((bodyData.totalMass, [body.totalMass]), axis=0)
 		bodyData.engineThrottle = np.concatenate((bodyData.engineThrottle, [body.engineThrottle]), axis=0)
 		bodyData.speed = np.concatenate((bodyData.speed, [body.speed]), axis=0)
-		bodyData.g = np.concatenate((bodyData.g, [body.g]), axis=0)
+		bodyData.mod_dvdt = np.concatenate((bodyData.mod_dvdt, [body.mod_dvdt]), axis=0)
 		bodyData.earthAlt = np.concatenate((bodyData.earthAlt, [altitude(body.pos, earth.pos, earth.r)]), axis=0)
+		bodyData.g_load = np.concatenate((bodyData.g_load, [body.g_load]), axis=0)
+		bodyData.drag = np.row_stack((bodyData.drag, body.drag))
+		bodyData.force = np.row_stack((bodyData.force, body.force))
+		bodyData.thrust = np.row_stack((bodyData.thrust, body.thrust))
 
 	return bodyData
