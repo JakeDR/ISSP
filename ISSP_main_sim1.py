@@ -90,10 +90,12 @@ objectList = [earth, spacecraft]  # for some reason this seems to be converted t
 
 #### create data log ####
 
-eventLog = np.array([])
+eventLog = np.array(['Event','Time'])
 
 #### iterate through time vector, generating time interval ####
 
+
+event1Flag = 0
 for i in range(1, len(time)):
 
 	#### the below block will be common to all simulation setups
@@ -109,6 +111,12 @@ for i in range(1, len(time)):
 	#spacecraft.thrustVector = ISSP.thrustVector2(spacecraft.pos, earth.pos, 'awy')
 	spacecraftData = ISSP.recordData(spacecraft, spacecraftData, earth, n_plot, i)
 
+
+
+	if ISSP.altitude(spacecraft.pos, earth.pos, earth.r) > 5000 and event1Flag == 0:
+		eventLog = ISSP.logEvent(eventLog, time[i], 'Alt < 5000m')
+		event1Flag = 1
+
 	if ISSP.altitude(spacecraft.pos, earth.pos, earth.r) < 0:  #end simulation if spacecraft crashes
 		end_tpoint = i  # capture last simulate timestep number
 		eventLog = ISSP.logEvent(eventLog, time[i], 'END')
@@ -120,6 +128,7 @@ for i in range(1, len(time)):
 
 #### plot results ####
 
+print(eventLog)
 time_final = time[0:end_tpoint+1]  # crop down time vector to only include up to last simulated timestep
 time_plot = np.transpose(time_final[0::n_plot])  # creates subsampled time vector to plot against
 
@@ -195,6 +204,20 @@ plt.title('Thrust')
 plt.ylabel('N')
 plt.xlabel('Time (s)')
 
+ax=plt.subplot(4, 2, 8, frameon=False)
+font = {'family': 'sansserif',
+        'color':  'white',
+        'weight': 'normal',
+        'size': 5,
+        }
+for i in range(1, len(eventLog[:,1])):
+	plt.plot(eventLog[i,1], 1,'v',color='white')
+	plt.text(eventLog[i,1],10, eventLog[i,0], rotation=90, fontdict=font)
+plt.ylim([0,10])
+plt.title('Event log')
+plt.ylabel('None')
+plt.xlabel('Time (s)')
+ax.axes.get_yaxis().set_visible(False)
 plt.tight_layout()
 plt.show()
 

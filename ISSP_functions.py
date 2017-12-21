@@ -272,3 +272,17 @@ def recordData(body, bodyData, earth, n, timepoint):
 		bodyData.thrust = np.row_stack((bodyData.thrust, body.thrust))
 
 	return bodyData
+
+
+######################################
+
+
+# adds a new entry to the events log
+# log = event log array to be appended
+# t = time of event
+# string = string to label event
+
+def logEvent(log, string, t):
+	new_entry = [t, string]
+	log = np.row_stack((log, new_entry))
+	return log
